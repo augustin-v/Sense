@@ -1,0 +1,12 @@
+[package]
+name = "backend"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+alith = "0.4.3"
+anyhow = "1.0.97"
+async-trait = "0.1.88"
+schemars = "0.8.22"
+serde = "1.0.219"
+tokio = "1.44.2"
