@@ -481,6 +481,8 @@ dependencies = [
  "alith",
  "anyhow",
  "async-trait",
+ "chrono",
+ "rand 0.9.0",
  "schemars",
  "serde",
  "tokio",

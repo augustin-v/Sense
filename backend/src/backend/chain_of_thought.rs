@@ -6,6 +6,8 @@ pub struct ChainOfThought<M: Completion> {
     agent: Agent<M>,
     reasoning_steps: VecDeque<ReasoningStep>,
     current_step: usize,
+    dream_title: Option<String>,
+    dream_theme: Option<String>,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -35,6 +37,8 @@ impl<M: Completion> ChainOfThought<M> {
             reasoning_steps: VecDeque::new(),
             agent,
             current_step: 0,
+            dream_theme: None,
+            dream_title: None,
         }
     }
 
@@ -152,5 +156,9 @@ impl<M: Completion> ChainOfThought<M> {
         }
         
         Ok(bounded_result)
+    }
+
+    pub async fn anchor_to_chain() {
+        
     }
 }
