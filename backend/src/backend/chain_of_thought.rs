@@ -2,17 +2,18 @@ use alith::{Agent, Completion};
 use anyhow::{Error, Result};
 use chrono::Utc;
 use rand::Rng;
+use serde::Serialize;
 use std::{collections::VecDeque, fmt::Write};
 
 pub struct ChainOfThought<M: Completion> {
     agent: Agent<M>,
     reasoning_steps: VecDeque<ReasoningStep>,
     current_step: usize,
-    dream_title: Option<String>,
-    dream_theme: Option<String>,
+    pub dream_title: Option<String>,
+    pub dream_theme: Option<String>,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct ReasoningStep {
     pub step_id: usize,
     pub desc: String,
