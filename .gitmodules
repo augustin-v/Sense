@@ -1,3 +1,6 @@
 [submodule "sense721/lib/forge-std"]
 	path = sense721/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "sense721/lib/openzeppelin-contracts"]
+	path = sense721/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
