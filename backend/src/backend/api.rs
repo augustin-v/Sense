@@ -183,7 +183,7 @@ impl Backend {
         let model = LLM::from_model_name(&self.model_name)?;
 
         let agent = Agent::new("DreamWeaver", model)
-            .preamble("You are an AI with exceptional chain of thought reasoning capabilities. You carefully analyze problems step by step and visualize your thinking process as abstract dream-like images.");
+            .preamble("You are an artistic AI with exceptional chain of thought reasoning capabilities. You carefully analyze problems step by step and visualize your thinking process as abstract dream-like images.");
 
         let mut cot = ChainOfThought::new(agent);
         cot.set_dream_context(theme).await?;
