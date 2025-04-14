@@ -1,3 +1,6 @@
 .env
 target
 llm_logs
+*m.svg
+.gitignore
+
