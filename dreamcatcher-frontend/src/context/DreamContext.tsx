@@ -37,8 +37,8 @@ export const DreamProvider: React.FC<{children: ReactNode}> = ({ children }) => 
     };
   }, [continuousDreamInterval]);
 
-  // Create a new dream with the given theme
-  const createNewDream = async (theme: string) => {
+// Create a new dream with the given theme
+const createNewDream = async (theme: string) => {
     try {
       console.log(`[DreamContext] Creating new dream with theme: "${theme}"`);
       setIsLoading(true);
@@ -66,7 +66,7 @@ export const DreamProvider: React.FC<{children: ReactNode}> = ({ children }) => 
       
       const completeDreamData = await response.json();
       console.log("Full dream response:", JSON.stringify(completeDreamData, null, 2));
-            console.log(`[DreamContext] Dream created successfully:`, {
+      console.log(`[DreamContext] Dream created successfully:`, {
         id: completeDreamData.dream_id,
         title: completeDreamData.title,
         stepsCount: completeDreamData.steps?.length || 0
@@ -80,15 +80,39 @@ export const DreamProvider: React.FC<{children: ReactNode}> = ({ children }) => 
         steps: completeDreamData.steps || []
       });
       
-      // Fetch SVG from the provided URL
-      console.log(`[DreamContext] Fetching SVG from: ${completeDreamData.svg_url}`);
-      const svgResponse = await fetch(completeDreamData.svg_url);
+      // Fix: Properly resolve the SVG URL with the API base URL
+      const svgUrl = completeDreamData.svg_url;
+      console.log(`[DreamContext] Original SVG URL: ${svgUrl}`);
+      
+      // Extract the dream ID from the URL or use it directly
+      const dreamId = completeDreamData.dream_id;
+      
+      // Construct a fully qualified URL by combining API_BASE_URL with the endpoint
+      const resolvedSvgUrl = `${API_BASE_URL}/dreams/${dreamId}/svg`;
+      console.log(`[DreamContext] Resolved SVG URL: ${resolvedSvgUrl}`);
+      
+      // Fetch SVG from the fully resolved URL
+      console.log(`[DreamContext] Fetching SVG from: ${resolvedSvgUrl}`);
+      const svgResponse = await fetch(resolvedSvgUrl);
       console.log(`[DreamContext] SVG response status: ${svgResponse.status}`);
       
       if (svgResponse.ok) {
         const svgData = await svgResponse.text();
         console.log(`[DreamContext] SVG fetched successfully (${svgData.length} bytes)`);
+        
+        // Add validation to check if content is actually SVG
+        if (svgData.trim().startsWith('<svg') || svgData.includes('<svg')) {
+          console.log(`[DreamContext] Valid SVG content confirmed`);
+        } else {
+          console.warn(`[DreamContext] Response doesn't look like SVG. First 100 chars: ${svgData.substring(0, 100)}`);
+        }
+        
         setSvg(svgData);
+      } else {
+        console.error(`[DreamContext] Failed to fetch SVG: ${svgResponse.status}`);
+        const errorText = await svgResponse.text();
+        console.error(`[DreamContext] SVG fetch error details: ${errorText.substring(0, 200)}`);
+        // Don't throw error here, just log it to avoid breaking the dream creation flow
       }
       
     } catch (err) {
