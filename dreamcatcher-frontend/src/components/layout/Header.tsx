@@ -47,7 +47,7 @@ const Header: React.FC = () => {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent'
           }}>
-            AI Dreamcatcher
+            Sense
           </span>
         </a>
         

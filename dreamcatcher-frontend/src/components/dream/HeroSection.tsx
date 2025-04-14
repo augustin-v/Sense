@@ -101,7 +101,7 @@ const HeroSection: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          AI Dreamcatcher transforms complex reasoning into beautiful SVG visualizations, anchored on Metis blockchain as NFTs.
+          Sense transforms complex reasoning into beautiful SVG visualizations, anchored on Metis blockchain as NFTs.
         </motion.p>
         
         <motion.div 
