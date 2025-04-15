@@ -82,6 +82,21 @@ pub struct NftResponse {
     transaction_hash: String,
 }
 
+#[derive(Serialize)]
+pub struct NftMetadata {
+    name: String,
+    description: String,
+    image: String,
+    external_url: Option<String>,
+    attributes: Vec<NftAttribute>,
+}
+
+#[derive(Serialize)]
+pub struct NftAttribute {
+    trait_type: String,
+    value: String,
+}
+
 #[derive(Debug)]
 enum DreamMessage {
     StartContinuous { dream_id: String, theme: String },
@@ -257,6 +272,7 @@ impl Backend {
                     "/api/dreams/continuous/stop",
                     web::get().to(stop_continuous_dreaming),
                 )
+                .route("api/metadata/{id}", web::get().to(get_nft_metadata))
         })
         .bind("127.0.0.1:8080")?
         .run()
@@ -690,4 +706,52 @@ async fn stop_continuous_dreaming(
         "status": "Continuous dreaming stopped",
         "dream_id": query.id
     }))
+}
+
+async fn get_nft_metadata(
+    backend: web::Data<Arc<Backend>>,
+    path: web::Path<(String)>,
+) -> impl Responder {
+    let token_id = path.into_inner();
+    
+    // Find the dream with this ID
+    if let Some(cot_arc) = backend.get_dream(&token_id) {
+        let cot = cot_arc.lock().unwrap();
+        
+        let base_url = "http://127.0.0.1:8080";  // For local development
+        
+        // Build the metadata
+        let steps = cot.get_steps();
+        
+        let metadata = NftMetadata {
+            name: cot.dream_title.clone().unwrap_or(format!("Dream #{}", token_id)),
+            description: format!(
+                "AI Dreamcatcher visualization: {}",
+                cot.dream_theme.clone().unwrap_or_else(|| "Ethereal Dream".to_string())
+            ),
+            image: format!("{}/api/dreams/{}/svg", base_url, token_id),
+            external_url: Some(format!("{}/dreams/{}", base_url, token_id)),
+            attributes: vec![
+                NftAttribute {
+                    trait_type: "Theme".to_string(),
+                    value: cot.dream_theme.clone().unwrap_or_else(|| "Unknown".to_string()),
+                },
+                NftAttribute {
+                    trait_type: "Steps Count".to_string(),
+                    value: steps.len().to_string(),
+                },
+                NftAttribute {
+                    trait_type: "Anchored".to_string(),
+                    value: steps.iter().any(|s| s.tx_hash.is_some()).to_string(),
+                },
+            ],
+        };
+        
+        // Return metadata with proper JSON content type
+        HttpResponse::Ok()
+            .content_type("application/json")
+            .json(metadata)
+    } else {
+        HttpResponse::NotFound().json(serde_json::json!({ "error": "Dream not found" }))
+    }
 }

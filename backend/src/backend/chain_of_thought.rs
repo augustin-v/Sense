@@ -1,7 +1,6 @@
 use alith::{Agent, Completion};
 use anyhow::{Error, Result};
 use chrono::Utc;
-use rand::Rng;
 use serde::Serialize;
 use std::{collections::VecDeque, fmt::Write};
 
@@ -380,8 +379,7 @@ impl<M: Completion> ChainOfThought<M> {
     }
 
     pub async fn generate_dream_nft(&mut self) -> Result<(String, String), anyhow::Error> {
-        // 1. Generate SVG visualization using AI
-        let svg = self.generate_svg_dream().await?;
+        let _ = self.generate_svg_dream().await?;
 
         // 2. For demo purposes, simulate IPFS storage and NFT minting
         // In a real implementation, this would:
